@@ -7,7 +7,7 @@ ENV ZABBIX_VERSION=2.4.7
 
 RUN \
   apt-get update -qq && \
-  apt-get install -y pkg-config subversion automake gcc make wget bc && \
+  apt-get install -yqq pkg-config subversion automake gcc make wget bc && \
   svn co svn://svn.zabbix.com/tags/${ZABBIX_VERSION} /usr/local/src/zabbix && \
   cd /usr/local/src/zabbix && \
   svn patch /foreground.patch && \
@@ -17,16 +17,16 @@ RUN \
   cd /usr/local/src/zabbix && \
   mkdir src/modules/zabbix_module_docker && \
   cd src/modules/zabbix_module_docker && \
-  wget https://raw.githubusercontent.com/monitoringartist/Zabbix-Docker-Monitoring/master/src/modules/zabbix_module_docker/zabbix_module_docker.c && \
-  wget https://raw.githubusercontent.com/monitoringartist/Zabbix-Docker-Monitoring/master/src/modules/zabbix_module_docker/Makefile && \
+  wget -q https://raw.githubusercontent.com/monitoringartist/Zabbix-Docker-Monitoring/master/src/modules/zabbix_module_docker/zabbix_module_docker.c && \
+  wget -q https://raw.githubusercontent.com/monitoringartist/Zabbix-Docker-Monitoring/master/src/modules/zabbix_module_docker/Makefile && \
   make && \
   mkdir -p /usr/local/lib/zabbix && \
   mv zabbix_module_docker.so /usr/local/lib/zabbix/zabbix_module_docker.so && \
-  apt-get remove -y make gcc subversion automake pkg-config && \
+  apt-get remove -yqq make gcc subversion automake pkg-config && \
   groupadd zabbix && \
   useradd -g zabbix zabbix && \
   rm -rf  /usr/local/src/zabbix && \
-  apt-get autoremove -y
+  apt-get autoremove -yqq
 
 COPY start.sh /start.sh
 
