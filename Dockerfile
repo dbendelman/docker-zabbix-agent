@@ -6,15 +6,14 @@ COPY foreground.patch /foreground.patch
 ENV ZABBIX_VERSION=2.4.7
 
 RUN \
-  apt-get update && \
-  apt-get install  -y pkg-config subversion automake gcc make wget bc && \
+  apt-get update -qq && \
+  apt-get install -y pkg-config subversion automake gcc make wget bc && \
   svn co svn://svn.zabbix.com/tags/${ZABBIX_VERSION} /usr/local/src/zabbix && \
   cd /usr/local/src/zabbix && \
   svn patch /foreground.patch && \
   ./bootstrap.sh && \
   ./configure --enable-agent && \
-  make install
-RUN \
+  make install && \
   cd /usr/local/src/zabbix && \
   mkdir src/modules/zabbix_module_docker && \
   cd src/modules/zabbix_module_docker && \
@@ -22,8 +21,7 @@ RUN \
   wget https://raw.githubusercontent.com/monitoringartist/Zabbix-Docker-Monitoring/master/src/modules/zabbix_module_docker/Makefile && \
   make && \
   mkdir -p /usr/local/lib/zabbix && \
-  mv zabbix_module_docker.so /usr/local/lib/zabbix/zabbix_module_docker.so
-RUN \
+  mv zabbix_module_docker.so /usr/local/lib/zabbix/zabbix_module_docker.so && \
   apt-get remove -y make gcc subversion automake pkg-config && \
   groupadd zabbix && \
   useradd -g zabbix zabbix && \
